@@ -13,17 +13,17 @@ class Board(object):
                     for row in self.grid]
 
         # map 'Pit' to 'Breeze' percept, and so on
-        self._map = {'P': 'B', 'G': 'G', 'W': 'S', 'X': None}
+        self._map = {'P': 'Breeze', 'G': 'Glitter', 'W': 'Stench', 'X': None}
 
         # insert perceptions to each room
         for x,row in enumerate(self.grid):
             for y,room in enumerate(row):
                 percept = self._map[room]
-                if percept and percept != 'G':
+                if percept and percept != 'Glitter':
                     for i,j in self._adjacent(x,y):
                         self.percepts[i][j][percept] = True
 
-                elif percept and percept == 'G':
+                elif percept and percept == 'Glitter':
                     self.percepts[x][y][percept] = True
 
     def __repr__(self):
@@ -34,15 +34,14 @@ class Board(object):
         return rep.strip()
 
     def _defaultdict(self):
-        return {'B': None, 'G': None, 'S': None}
+        return {'Breeze': None, 'Glitter': None, 'Stench': None}
 
     def _adjacent(self, i,j):
         '''
         Returns a list of tuples (x,y) that represent rooms adjacent to
         i,j (left, right, up, down).
         '''
-        candidates = [ (i,j) , (i-1, j), (i+1, j), (i, j-1), (i, j+1) ]
+        candidates = [(i,j), (i-1, j), (i+1, j), (i, j-1), (i, j+1) ]
         return [c for c in candidates 
-                if (c[0] > -1 and c[0] < len(self.grid) and
+                if (c[0] > -1 and c[0] < len(self.grid) and \
                     c[1] > -1 and c[1] < len(self.grid)) ]
-

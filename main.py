@@ -7,14 +7,14 @@ if __name__ == '__main__':
     p = Player(b)
 
     while (p.alive):
+        p.print_location()
+        p.print_percepts()
 
         # Check for goal state
         if (p.win):
             print('Congrats, you win!')
             break
 
-        p.print_location()
-        p.print_percepts()
         command = input(p.prompt()).strip().upper()
 
         # Basic command validation
