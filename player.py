@@ -1,12 +1,11 @@
 from copy import deepcopy
-
-## TODO lose if you move into square with wumpus, Pit
-## check if player has an arrow left to shoot
+from knowledgebase import KnowledgeBase
 
 class Player(object):
 
     def __init__(self, board):
         self.board = board
+        self.kb = KnowledgeBase()
         self.alive = True
         self.win   = False
         self.d     = 'E'
@@ -20,6 +19,7 @@ class Player(object):
         self.j = 0
 
         # check to see if we started in the goal state
+        self.kb.write(self)
         if self.board.percepts[self.i][self.j]['Glitter']:
             self.win = True
 
@@ -71,6 +71,8 @@ class Player(object):
             if self.arrows > 0:
                 hit = self.shoot()
 
+            else: 
+                print('You have no arrows left!')
 
     def shoot(self):
         '''
@@ -117,6 +119,7 @@ class Player(object):
 
         self.i, self.j, self.x, self.y = i,j,x,y
         self.score -= 1
+        self.kb.write(self)
 
         if self.board.grid[i][j] == 'W':
             print("You were eaten by the Wumpus. Sorry. -1000 Points")
