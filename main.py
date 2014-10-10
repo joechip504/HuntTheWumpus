@@ -24,3 +24,5 @@ if __name__ == '__main__':
 
         p.execute(command)
 
+    print("You scored: {}".format(p.score))
+

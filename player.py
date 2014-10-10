@@ -1,4 +1,3 @@
-from itertools import cycle
 from copy import deepcopy
 
 ## TODO lose if you move into square with wumpus, Pit
@@ -12,6 +11,7 @@ class Player(object):
         self.win   = False
         self.d     = 'E'
         self.arrows = 1
+        self.score  = 0
 
         # x,y are the 'printed' coordinates, starting at 1,1
         # i,j are the 'actual'  coordinates, starting at len - 1, 0
@@ -69,13 +69,15 @@ class Player(object):
 
         elif command == 'S':
             if self.arrows > 0:
-                self.shoot()
+                hit = self.shoot()
+
 
     def shoot(self):
         '''
         returns True if player had an arrow and hit the wumpus.
         '''
         self.arrows -= 1 
+        self.score -= 10
 
         candidates = []
         dummy_player = deepcopy(self)
@@ -83,11 +85,20 @@ class Player(object):
 
         while move:
             candidates.append(move[:2])
-            dummy_player.move(*move)
+            dummy_player.i, dummy_player.j, dummy_player.x, \
+                    dummy_player.y = move
             move = dummy_player.possible_moves().get(dummy_player.d)
 
-        print(candidates)
+        for x,y in candidates:
+            if self.board.grid[x][y] == 'W':
+                self.scream()
+                self.score += 500
+                return True
 
+        return False
+
+    def scream(self):
+        print("You hear a SCREAM!!! The Wumpus is dead!")
 
     def possible_moves(self):
         i,j,x,y = self.i, self.j, self.x, self.y
@@ -105,11 +116,22 @@ class Player(object):
         the move '''
 
         self.i, self.j, self.x, self.y = i,j,x,y
+        self.score -= 1
+
+        if self.board.grid[i][j] == 'W':
+            print("You were eaten by the Wumpus. Sorry. -1000 Points")
+            self.alive = False
+
+        elif self.board.grid[i][j] == 'P':
+            print("You fell into a pit. Sorry. -1000 Points")
+            self.alive = False
+
+        if not self.alive:
+            self.score -= 1000
 
         if self.board.percepts[i][j]['Glitter']:
+            self.score += 1000
             self.win = True
-
-
 
     def prompt(self):
         return "What would you like to do? Please enter command [R,L,F,S]:\n> "
