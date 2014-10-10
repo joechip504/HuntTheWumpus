@@ -1,4 +1,8 @@
 from itertools import cycle
+from copy import deepcopy
+
+## TODO lose if you move into square with wumpus, Pit
+## check if player has an arrow left to shoot
 
 class Player(object):
 
@@ -7,6 +11,7 @@ class Player(object):
         self.alive = True
         self.win   = False
         self.d     = 'E'
+        self.arrows = 1
 
         # x,y are the 'printed' coordinates, starting at 1,1
         # i,j are the 'actual'  coordinates, starting at len - 1, 0
@@ -28,9 +33,6 @@ class Player(object):
         p = " and a ".join(percepts)
         if p:
             print('There is a {} in here!'.format(p))
-
-    def bump(self):
-        pass
 
     def forward(self):
         # get next tile, increment x,y,i,j, check for bump
@@ -65,8 +67,27 @@ class Player(object):
         elif command == 'F':
             self.forward()
 
+        elif command == 'S':
+            if self.arrows > 0:
+                self.shoot()
+
     def shoot(self):
-        pass
+        '''
+        returns True if player had an arrow and hit the wumpus.
+        '''
+        self.arrows -= 1 
+
+        candidates = []
+        dummy_player = deepcopy(self)
+        move = dummy_player.possible_moves().get(dummy_player.d)
+
+        while move:
+            candidates.append(move[:2])
+            dummy_player.move(*move)
+            move = dummy_player.possible_moves().get(dummy_player.d)
+
+        print(candidates)
+
 
     def possible_moves(self):
         i,j,x,y = self.i, self.j, self.x, self.y
