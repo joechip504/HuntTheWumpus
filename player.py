@@ -70,6 +70,8 @@ class Player(object):
         elif command == 'S':
             if self.arrows > 0:
                 hit = self.shoot()
+                if not hit:
+                    print('You missed! {} arrows remaining'.format(self.arrows))
 
             else: 
                 print('You have no arrows left!')

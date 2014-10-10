@@ -3,7 +3,11 @@ from board import Board
 from player import Player
 
 if __name__ == '__main__':
-    b = Board('input-1.txt')
+
+    if len(sys.argv) != 2:
+        sys.exit('USAGE: python3 main.py <input-file.txt>')
+
+    b = Board(sys.argv[1])
     p = Player(b)
 
     while (p.alive):
